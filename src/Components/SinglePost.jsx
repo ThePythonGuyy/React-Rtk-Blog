@@ -4,8 +4,11 @@ import PostAuthor from './PostAuthor'
 import TimeAgo from './TimeAgo'
 import PostReactions from './PostReactions'
 import { Link } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import { currentPost } from '../features/posts/postsSlice'
 
-const SinglePost = ({post, id}) => {
+const SinglePost = ({postId}) => {
+  const post = useSelector((state) => currentPost(state, postId));
   return (
     <div className="card" key={post.id}>
                 <div className="content">

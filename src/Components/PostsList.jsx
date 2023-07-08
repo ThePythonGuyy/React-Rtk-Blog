@@ -6,6 +6,7 @@ import {
   getPostsError,
   getPostsStatus,
   selectAllPosts,
+  selectPostIds,
 } from "../features/posts/postsSlice";
 import PostAuthor from "./PostAuthor";
 import TimeAgo from "./TimeAgo";
@@ -18,7 +19,7 @@ import SinglePost from "./SinglePost";
 const PostsList = (props) => {
   const dispatch = useDispatch();
 
-  const posts = useSelector(selectAllPosts);
+  const postIds = useSelector(selectPostIds);
   const postsStatus = useSelector(getPostsStatus);
   const postsError = useSelector(getPostsError);
 
@@ -33,9 +34,9 @@ const PostsList = (props) => {
     }
   }, [postsStatus, dispatch]);
 
-  const orderedPosts = posts
-    .slice()
-    .sort((a, b) => b.date.localeCompare(a.date));
+  // const orderedPosts = posts
+  //   .slice()
+  //   .sort((a, b) => b.date.localeCompare(a.date));
 
   const handleView = (id) => {
     
@@ -51,9 +52,9 @@ const PostsList = (props) => {
         <p>Unable to fetch data</p>
       ) : (
         <div>
-          {posts &&
-            orderedPosts.map((post, key) => (
-              <SinglePost post={post} key={post.id} />
+          {postIds &&
+            postIds.map((postId) => (
+              <SinglePost postId={postId} key={postId} />
             ))}
         </div>
       )}
