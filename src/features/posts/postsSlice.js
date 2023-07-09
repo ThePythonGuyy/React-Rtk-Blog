@@ -1,4 +1,10 @@
-import { createAsyncThunk, createEntityAdapter, createSelector, createSlice, nanoid } from "@reduxjs/toolkit";
+import {
+  createAsyncThunk,
+  createEntityAdapter,
+  createSelector,
+  createSlice,
+  nanoid,
+} from "@reduxjs/toolkit";
 import axios from "axios";
 import { sub } from "date-fns";
 
@@ -36,14 +42,14 @@ import { sub } from "date-fns";
 const POSTS_URL = "https://jsonplaceholder.typicode.com/posts";
 
 const postsAdapter = createEntityAdapter({
-  sortComparer: (a, b) => b.date.localeCompare(a.date)
-})
+  sortComparer: (a, b) => b.date.localeCompare(a.date),
+});
 
 const initialState = postsAdapter.getInitialState({
-  status: 'idle',
+  status: "idle",
   error: null,
   count: 0,
-})
+});
 
 export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
   try {
@@ -82,17 +88,17 @@ export const addNewPost = createAsyncThunk(
 
 export const deletePost = createAsyncThunk(
   "deletePost",
-  async (initialPost) =>{
-    const {id} = initialPost
+  async (initialPost) => {
+    const { id } = initialPost;
     try {
-      const response  = await axios.delete(`${POSTS_URL}/${id}`);
+      const response = await axios.delete(`${POSTS_URL}/${id}`);
       if (response?.status === 200) return initialPost;
       return `${response?.status}: ${response?.statusText}`;
     } catch (err) {
       return err.message;
     }
   }
-)
+);
 
 const postsSlice = createSlice({
   name: "posts",
@@ -129,7 +135,7 @@ const postsSlice = createSlice({
     },
     increaseCount: (state, action) => {
       state.count += 1;
-    }
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchPosts.pending, (state) => {
@@ -172,37 +178,37 @@ const postsSlice = createSlice({
 
     builder.addCase(updatetPost.fulfilled, (state, action) => {
       if (!action.payload?.id) {
-        console.log('Update could not complete');
+        console.log("Update could not complete");
         console.log(action.payload);
         return;
       }
-      const {id} = action.payload;
-      action.payload.id = 120;
+      const { id } = action.payload;
+      // action.payload.id = 120;
       action.payload.date = new Date().toISOString();
       // const posts = state.posts.filter(post => post.id != id);
       // state.posts = [...posts, action.payload]
-      postsAdapter.updateOne(state, action.payload);
+      postsAdapter.upsertOne(state, action.payload);
     });
 
     builder.addCase(deletePost.fulfilled, (state, action) => {
-      if(!action.payload?.id) {
-        console.log('Unable to delete post');
+      if (!action.payload?.id) {
+        console.log("Unable to delete post");
         console.log(action.payload);
       }
 
-      const {id} = action.payload;
+      const { id } = action.payload;
       // const posts = state.posts.filter((post) => post.id!== Number(id))
       // state.posts = posts;
-      postsAdapter.removeOne(state, id)
-    })
+      postsAdapter.removeOne(state, id);
+    });
   },
 });
 
 export const {
   selectAll: selectAllPosts,
   selectById: currentPost,
-  selectIds: selectPostIds
-} = postsAdapter.getSelectors(state => state.posts)
+  selectIds: selectPostIds,
+} = postsAdapter.getSelectors((state) => state.posts);
 
 // export const selectAllPosts = (state) => state.posts.posts;
 export const getPostsStatus = (state) => state.posts.status;
@@ -215,8 +221,8 @@ export const getCount = (state) => state.posts.count;
 export const selectPostByUser = createSelector(
   [selectAllPosts, (state, userId) => userId],
   (posts, userId) => posts.filter((post) => post.userId === userId)
-)
+);
 
-export const { updateDoc, updateReaction, increaseCount } = postsSlice.actions;
+export const { updateReaction, increaseCount } = postsSlice.actions;
 
 export default postsSlice.reducer;

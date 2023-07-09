@@ -3,17 +3,17 @@ import { styled } from "styled-components";
 import "./UpdatePosts.css";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { deletePost, selectAllPosts, updatetPost } from "../features/posts/postsSlice";
+import { currentPost, deletePost, selectAllPosts, updatetPost } from "../features/posts/postsSlice";
 
 const EditPost = () => {
   const { id } = useParams();
-  const posts = useSelector(selectAllPosts);
+  // const posts = useSelector(selectAllPosts);
 const dispatch = useDispatch()
 const navigate = useNavigate()
-  const currentPost = posts.find((post) => post.id == id);
+  const post = useSelector((state) => currentPost(state, Number(id)));
 
-  const [title, setTitle] = useState(currentPost.title);
-  const [content, setContent] = useState(currentPost.body);
+  const [title, setTitle] = useState(post.title);
+  const [content, setContent] = useState(post.body);
 
   const handleTitle = (e) => {
     setTitle(e.target.value);
@@ -31,8 +31,8 @@ const navigate = useNavigate()
     title,
     body: content,
     id,
-    reactions: currentPost.reactions,
-    userId: currentPost.userId,
+    reactions: post.reactions,
+    userId: post.userId,
    })).unwrap()
     navigate(`/viewpost/${id}`);
   };

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { styled } from "styled-components";
-import { addNewPost, updateDoc } from "../features/posts/postsSlice";
+import { addNewPost } from "../features/posts/postsSlice";
 import { selectAllUsers } from "../features/user/userSlice";
 import './UpdatePosts.css'
 import { useNavigate } from "react-router-dom";
